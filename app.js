@@ -22,12 +22,37 @@ const badge = game => game.marquee ? '<span class="badge">★ Marquee</span>' : 
 const dateObject = game => new Date(`${game.date}T12:00:00`);
 const dateText = game => dateObject(game).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 const footer = () => '<footer><span>SUMMIT HOCKEY · SHARED SEASON, FAIR SHARE.</span><span>Interactive demo · Fictional schedule · Changes reset on refresh</span></footer>';
-const back = () => '<a class="back" href="#overview">← Season Overview</a>';
+const back = () => '<nav class="return-nav" aria-label="Main navigation"><a class="back" href="#overview"><span aria-hidden="true">←</span> Back to Season Overview</a></nav>';
+function scheduleCards() {
+  const months = new Map();
+  [...games].sort((a, b) => a.date.localeCompare(b.date)).forEach(g => {
+    const month = g.date.slice(0, 7);
+    const monday = dateObject(g);
+    monday.setDate(monday.getDate() - (monday.getDay() + 6) % 7);
+    const week = monday.getTime();
+    if (!months.has(month)) months.set(month, new Map());
+    const weeks = months.get(month);
+    if (!weeks.has(week)) weeks.set(week, []);
+    weeks.get(week).push(g);
+  });
+  return [...months].map(([month, weeks]) => {
+    const monthGames = [...weeks.values()].flat();
+    const title = dateObject(monthGames[0]).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    return `<section class="month-group" aria-labelledby="month-${month}"><div class="month-heading"><h3 id="month-${month}">${title}</h3><span class="subtle">${monthGames.length} games · ${monthGames.filter(g => !g.owner).length} open</span></div><div class="month-weeks">${[...weeks].map(([week, entries]) => {
+      const monday = new Date(week);
+      const sunday = new Date(week);
+      sunday.setDate(sunday.getDate() + 6);
+      const shortDate = date => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      return `<section class="week-group" aria-labelledby="week-${month}-${week}"><h4 id="week-${month}-${week}">${shortDate(monday)} – ${shortDate(sunday)}</h4><div class="week-cards">${entries.map(gameCard).join('')}</div></section>`;
+    }).join('')}</div></section>`;
+  }).join('');
+}
+const gameCard = g => `<button class="game-card ${!g.owner ? 'available' : ''}" data-game="${g.id}" aria-label="${g.opponent}, ${dateText(g)}, ${g.owner ? `claimed by ${g.owner}` : 'open'}${g.marquee ? ', marquee game' : ''}"><span class="date"><span>${dateObject(g).toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}</span><strong>${dateObject(g).getDate()}</strong></span><span><span class="opponent"><span class="vs">vs</span>${g.opponent}</span><span class="game-meta">${dateObject(g).toLocaleDateString('en-US', { weekday: 'short' })} · 7:00 PM ${badge(g)}</span></span><span class="row-status"><span class="status ${!g.owner ? 'open' : g.owner === 'Will' ? 'mine' : ''}">${g.owner ? `Claimed by ${g.owner}` : 'Open to claim'}</span>${g.waitlist.length ? `<span class="claim-sub">${g.waitlist.length} on waitlist</span>` : ''}</span><span class="arrow" aria-hidden="true">↗</span></button>`;
 function overview() {
   const open = games.filter(g => !g.owner).length;
   app.innerHTML = `<header class="hero"><h1>See who's got what —<br><span>and make sure everyone gets a fair share of the season.</span></h1><div class="meta"><span class="team">Summit Hockey</span><span class="dot">/</span><span>2026–27 season split</span><span class="user">${avatar('Will')} Viewing as <strong>Will</strong></span></div></header>
   <section class="snapshot" aria-labelledby="fairness-title"><div class="section-heading"><h2 id="fairness-title">Your group's split</h2><a href="#fairness" class="text-link">See fairness breakdown ↗</a></div><div class="people">${friends.map(name => { const c = counts(name); return `<div class="person">${personName(name)}<div class="person-count"><strong>${c.total}</strong> games claimed</div><div class="marquee-count">★ ${c.marquee} marquee ${c.marquee === 1 ? 'game' : 'games'}</div></div>`; }).join('')}</div></section>
-  <section aria-labelledby="schedule-title"><div class="section-heading schedule-heading"><div><h2 id="schedule-title">The season ahead</h2><p class="subtle">12 home games · ${open} open to claim</p></div><span class="legend"><span class="star">★</span> Marquee matchup</span></div><div class="schedule">${games.map(g => `<button class="game-row" data-game="${g.id}" aria-label="${g.opponent}, ${dateText(g)}, ${g.owner ? `claimed by ${g.owner}` : 'open'}${g.marquee ? ', marquee game' : ''}"><span class="date"><span>${dateObject(g).toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}</span><strong>${dateObject(g).getDate()}</strong></span><span><span class="opponent"><span class="vs">vs</span>${g.opponent}</span><span class="game-meta">${dateObject(g).toLocaleDateString('en-US', { weekday: 'short' })} · 7:00 PM ${badge(g)}</span></span><span class="row-status"><span class="status ${!g.owner ? 'open' : g.owner === 'Will' ? 'mine' : ''}">${g.owner ? `Claimed by ${g.owner}` : 'Open to claim'}</span>${g.waitlist.length ? `<span class="claim-sub">${g.waitlist.length} on waitlist</span>` : ''}</span><span class="arrow" aria-hidden="true">↗</span></button>`).join('')}</div></section>${footer()}`;
+  <section aria-labelledby="schedule-title"><div class="section-heading schedule-heading"><div><h2 id="schedule-title">The season ahead</h2><p class="subtle">12 home games · ${open} open to claim</p></div><span class="legend"><span class="star">★</span> Marquee matchup</span></div><div class="schedule">${scheduleCards()}</div></section>${footer()}`;
 }
 function detail(g) {
   const position = g.waitlist.indexOf('Will');
