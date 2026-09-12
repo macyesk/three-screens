@@ -38,23 +38,25 @@ Repository Link: https://github.com/macyesk/three-screens.git
 | Need: What do you use to facilitate sharing season tickets and what is annoying about it?   | We are using a groupchat, but sometimes people claiming games would get buried. One time we tried to make a calendar but it was hard to tell who had which game. <br><br>Prototype: Easily see who has claimed a game on the landing page.     |
 | Persona: How often are you checking for claimed games, what are you usually doing when you check?   | I check probably weekly when I am planning out my weeknights.<br><br>Prototype: Grouping games by week helps see what the status of that week’s games are.   |
 | Value: What would you need a new solution to do for you to convert to it?    | It would need to make it easy to see how many games each person has been to.<br><br>Prototype: Fairness tracker shows how many games each person has claimed and how many marquee games they have claimed.     |
-| Capability: Click around on this and tell me what you think it is for.   | I think it is a tool to organize attendance at games. It also tracks how many games each person has gone to against the others.<br><br>Prototype: Horizontal bar charts show group members claim numbers against each other. Cards list each game and who it is claimed by. Game detail pages say the game belongs to someone.     |
+| Capability: Click around on this and tell me what you think it is for.   | I think it is a tool to organize attendance at games. It also tracks how many games each person has claimed against the others.<br><br>Prototype: Horizontal bar charts show group members claim numbers against each other. Cards list each game and who it is claimed by. Game detail pages say the game belongs to someone.     |
 
 ## Design Justification
-
+**Affordance sentence:**
+See who's got what — and make sure everyone gets a fair share of the season.
+<br>
 - Does the landing screen signal the primary capability and fundamental value at first glance, before reading? 
 Yes. The first thing you see if the split of games for each person and you can see a little bit of the area where you can see claimed games.
 - Does every element on the landing screen earn its place, or does anything compete with the primary job? 
 Everything on the landing screen has its place. The main capability and value are represented equally and solely.
 - What information and actions belong together on each screen, and which Gestalt grouping principle communicates that? 
-Closure is used frequently on most of the pages. Boxes represent each area well.
+Common region is used frequently on most of the pages. Boxes represent each area well.
 ![Original Product](images/originalss.png)
 ![New Product](images/newss.png)
-These images show on top the original product and on the bottom the new product. The change demonstrate the proximity principle grouping games by week. The lack of visual distinction makes it difficult to see what is happening. Improving white space and changing the utilization of both closure and proximity.
+These images show on top the original product and on the bottom the new product. The change demonstrate the proximity principle grouping games by week. The lack of visual distinction makes it difficult to see what is happening. Improving white space and changing the utilization of both common region and proximity.
 - Do screens 2 and 3 stay on mission, and can you return to the landing screen from everywhere? 
 Yes they are directly connected to the main purpose of the app and the return to the landing screen is clear.
 - What did the AI initially get wrong, skip, or oversimplify, and what did you change? 
 The AI initially made the landing page a little bit more unclear than I desired. The claim calendar all at the same level was confusing. Breaking it out into different proximity groups help minimize the mental load required to make a decision about the next step.
 - Which design question or grouping/signaling decision motivated each important change?
-I wanted less proximity among all of the game claims. I thought it made sense to spread things out to utilize proximity to bring clarity to that section.
+I wanted closer spacing within each week and larger gaps between weeks. I thought it made sense to spread things out to utilize proximity to bring clarity to that section.
 
